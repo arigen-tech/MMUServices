@@ -45,7 +45,7 @@ public class OpdController {
 	
 Map<String, Object> map = new HashMap<String, Object>();
 	
-	////////////////// Get Waiting Patient List for Pre-Consultation Assessment /////////////////////////////
+	////////////////// Get new Waiting Patient List for Pre-Consultation Assessment /////////////////////////////
 	
 	@RequestMapping(value="/getPreConsPatientWatingList", method = RequestMethod.POST,produces="application/json",consumes="application/json")
 	public String PreConsPatientWatingList(@RequestBody HashMap<String, Object> jsondata, HttpServletRequest request,
