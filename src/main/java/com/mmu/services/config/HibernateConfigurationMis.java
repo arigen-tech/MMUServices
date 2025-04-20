@@ -23,8 +23,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan({ "com.mmu.services.config" })
-@PropertySource("classpath:application-prod.properties")
-//@PropertySource("classpath:application-testing.properties")
+//@PropertySource("classpath:application-prod.properties")
+@PropertySource("classpath:application-testing.properties")
 @EnableWebMvc
 public class HibernateConfigurationMis {
 

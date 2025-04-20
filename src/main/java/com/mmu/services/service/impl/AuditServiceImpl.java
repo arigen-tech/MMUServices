@@ -1940,8 +1940,10 @@ public class AuditServiceImpl implements AuditService {
                                     vendorBillMMUDetail.put("fileName", vendorSDocs.getFileName());
                                     if(null!=vendorSDocs.getScreenType() && vendorSDocs.getScreenType().equals("nodal_officer")) {
                                     vendorBillMMUDetail.put("screen_name", vendorSDocs.getScreenType());
+                                    }else if(null!=vendorSDocs.getScreenType() && vendorSDocs.getScreenType().equals("paymentScreen")) {
+                                    	vendorBillMMUDetail.put("screen_name", vendorSDocs.getScreenType()); 
                                     }else {
-                                    	 vendorBillMMUDetail.put("screen_name", "vendor");
+                                    	vendorBillMMUDetail.put("screen_name", "vendor");
                                     }
                                     
                                     vendorSupportingDocsList.add(vendorBillMMUDetail);
@@ -2331,7 +2333,16 @@ public class AuditServiceImpl implements AuditService {
 					
 					Long finalAmount=(long)Double.parseDouble(jsondata.get("finalAmount").toString());
 				    getFundDetails(finalAmount,Long.parseLong(jsondata.get("districtId").toString()),Long.parseLong(jsondata.get("cityId").toString()),jsondata.get("phase").toString());
-					authorityDetails = auditDao.savePaymentVendorBillDetails(jsondata);
+				    //this code covered payment recepit document upload and remarks in supprting docs table
+				    VendorInvoicSupportingDocs vendorInvoicSupportingDocs = new VendorInvoicSupportingDocs();
+				    vendorInvoicSupportingDocs.setFileName(jsonWebdata.get("paymentRecepitFileName").toString());
+					vendorInvoicSupportingDocs.setDocumentNote(jsondata.get("paymentRemarks").toString());
+					vendorInvoicSupportingDocs.setScreenType("paymentScreen");
+					vendorInvoicSupportingDocs.setCaptureVendorBillDetailId(Long.parseLong(jsondata.get("captureVendorBillDetailId").toString()));
+					vendorInvoicSupportingDocs.setUserId(Long.parseLong(jsondata.get("userId").toString()));
+					auditDao.createRecord(vendorInvoicSupportingDocs);
+					///this is end /////////
+				    authorityDetails = auditDao.savePaymentVendorBillDetails(jsondata);
 				}
 				else
 				{	
