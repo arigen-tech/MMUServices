@@ -1283,7 +1283,12 @@ public class AuditDaoImpl implements AuditDao {
 					 VendorInvoiceApproval via=new VendorInvoiceApproval();
 			         via.setCaptureVendorBillDetailId(Long.parseLong(jsondata.get("captureVendorBillDetailId").toString()));
 			         via.setAuthorityId(Long.parseLong(jsondata.get("authorityId").toString()));
-			         via.setAuthorityDate(new Date());
+			         if(null!=jsondata.get("actionDate")) {
+		                    String actionDate=jsondata.get("actionDate").toString();
+		                    Date dd1 = HMSUtil.convertStringDateToUtilDateForDatabase(actionDate);
+		                    via.setAuthorityDate(dd1);
+	                    }
+			         //via.setAuthorityDate(new Date());
 			         via.setAuthorityName(jsondata.get("authorityName").toString());
 			         via.setAuthorityRole(jsondata.get("authorityRoleName").toString());
 			         via.setAuthorityAction(jsondata.get("actionId").toString());
@@ -1373,7 +1378,12 @@ public class AuditDaoImpl implements AuditDao {
 					 VendorInvoiceApproval via=new VendorInvoiceApproval();
 			         via.setCaptureVendorBillDetailId(Long.parseLong(jsondata.get("captureVendorBillDetailId").toString()));
 			         via.setAuthorityId(Long.parseLong(jsondata.get("authorityId").toString()));
-			         via.setAuthorityDate(new Date());
+			         //via.setAuthorityDate(new Date());
+			         if(null!=jsondata.get("actionDate")) {
+		                    String actionDate=jsondata.get("actionDate").toString();
+		                    Date dd1 = HMSUtil.convertStringDateToUtilDateForDatabase(actionDate);
+		                    via.setAuthorityDate(dd1);
+	                    }
 			         via.setAuthorityName(jsondata.get("authorityName").toString());
 			         via.setAuthorityRole(jsondata.get("authorityRoleName").toString());
 			         via.setAuthorityAction(jsondata.get("actionId").toString());
@@ -1457,7 +1467,12 @@ public class AuditDaoImpl implements AuditDao {
 				 VendorInvoiceApproval via=new VendorInvoiceApproval();
 		         via.setCaptureVendorBillDetailId(Long.parseLong(jsondata.get("captureVendorBillDetailId").toString()));
 		         via.setAuthorityId(Long.parseLong(jsondata.get("authorityId").toString()));
-		         via.setAuthorityDate(new Date());
+		         //via.setAuthorityDate(new Date());
+		         if(null!=jsondata.get("actionDate")) {
+	                    String actionDate=jsondata.get("actionDate").toString();
+	                    Date dd1 = HMSUtil.convertStringDateToUtilDateForDatabase(actionDate);
+	                    via.setAuthorityDate(dd1);
+                 }
 		         via.setAuthorityName(jsondata.get("authorityName").toString());
 		         via.setAuthorityRole(jsondata.get("authorityRoleName").toString());
 		         via.setAuthorityAction(jsondata.get("actionId").toString());

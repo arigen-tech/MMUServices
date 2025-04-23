@@ -1603,7 +1603,11 @@ public class AuditServiceImpl implements AuditService {
 	                    VendorInvoiceApproval via=new VendorInvoiceApproval();
 	                    via.setCaptureVendorBillDetailId(Long.parseLong(jsondata.getString("captureVendorBillDetailId")));
 	                    via.setAuthorityId(Long.parseLong(jsondata.getString("auditorAuthorityId")));
-	                    via.setAuthorityDate(new Date());
+	                    if(null!=jsondata.getString("actionDate")) {
+		                    String actionDate=jsondata.getString("actionDate");
+		                    Date dd1 = HMSUtil.convertStringDateToUtilDateForDatabase(actionDate);
+		                    via.setAuthorityDate(dd1);
+	                    }
 	                    via.setAuthorityName(jsondata.getString("auditorName"));
 	                    via.setAuthorityRole(jsondata.getString("auditorAuthorityName"));
 	                    via.setAuthorityAction(jsondata.getString("actionIdValue"));
