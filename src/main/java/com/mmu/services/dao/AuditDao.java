@@ -101,6 +101,8 @@ public interface AuditDao {
 		Map<Long, MasCity> readCities(List<Long> cityIds);
 		Map<Long, MasDistrict> readDistricts(List<Long> districtIds);
 		String documentDelete(HashMap<String, Object> jsondata);
+		List<Object[]> getIncidentReport(String fromDate, String toDate, int mmuId, int vendorId,
+				String levelOfUser, int userId);
 		
 	
 }

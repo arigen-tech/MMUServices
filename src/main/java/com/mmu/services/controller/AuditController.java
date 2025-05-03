@@ -251,4 +251,11 @@ public class AuditController {
 	{
 		return auditService.deleteDocument(jsondata, request, response);
 	}
+	
+	@RequestMapping(value="/getPenaltyRegister", method = RequestMethod.POST,produces="application/json",consumes="application/json")
+	public String getPenaltyRegister(@RequestBody HashMap<String, String> jsondata, HttpServletRequest request,
+			HttpServletResponse response)
+	{
+		return auditService.getPenaltyRegister(jsondata, request, response);
+	}
 }

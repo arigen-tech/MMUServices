@@ -3943,4 +3943,99 @@ public class AuditServiceImpl implements AuditService {
 		return json.toString();
 	}
 	
+	@Override
+	public String getPenaltyRegister(HashMap<String, String> jsondata, HttpServletRequest request,
+			HttpServletResponse response) {
+		JSONObject json = new JSONObject();
+		List<Object[]> listObject = null;
+		List<HashMap<String, Object>> c = new ArrayList<HashMap<String, Object>>();
+		if (!jsondata.isEmpty()) {
+
+				if (jsondata.get("fromDate") != null) {
+					listObject = auditDao.getIncidentReport(jsondata.get("fromDate").toString(),jsondata.get("toDate").toString(),
+							Integer.parseInt(jsondata.get("mmuId").toString()),
+							Integer.parseInt(jsondata.get("vendorId").toString()),jsondata.get("levelOfUser").toString(),Integer.parseInt(jsondata.get("userId").toString()));
+				}
+				String city = null;
+				String mmu = null;
+				String typeOfPenalty="";
+				String description=null;
+				String dateOfPenalty=null;
+				String penaltyAmount="";
+				String dateMMDDYYY="";
+				
+				//String orderStustus="";
+				if (listObject != null) {
+					try {
+						for (Iterator<?> it = listObject.iterator(); it.hasNext();) {
+							Object[] row = (Object[]) it.next();
+
+							/*
+							 * for(Object dgMasInvestigation : listObject) { Object row=dgMasInvestigation;
+							 */
+							HashMap<String, Object> pt = new HashMap<String, Object>();
+
+							if (row[0] != null) {
+								city = row[0].toString();
+							}
+							if (row[1] != null) {
+								mmu = row[1].toString();
+							}
+
+							if (row[2] != null) {
+								description = row[2].toString();
+								
+							}
+
+						
+
+							if (row[3] != null) {
+								typeOfPenalty = row[3].toString();
+								
+							}
+							if (row[4] != null) {
+								dateOfPenalty = row[4].toString();
+								Date dd1= HMSUtil.dateFormatteryyyymmdd(dateOfPenalty);
+								dateMMDDYYY = HMSUtil.convertDateToStringFormat(
+										dd1, "dd/MM/yyyy");
+								
+							}
+						
+							if (row[5] != null) {
+								penaltyAmount = row[5].toString();
+							}
+							
+							pt.put("city", city);
+							pt.put("mmu", mmu);
+							pt.put("typeOfPenalty", typeOfPenalty);
+							pt.put("description", description);
+							pt.put("dateOfPenalty", dateMMDDYYY);
+							pt.put("penaltyAmount", penaltyAmount);
+							
+							c.add(pt);
+						}
+						json.put("listObject", c);
+						json.put("msg", "Fund Allocation List  get  sucessfull... ");
+						json.put("status", "1");
+
+					}
+
+					catch (Exception e) {
+						e.printStackTrace();
+						return "{\"status\":\"0\",\"msg\":\"Somting went wrong}";
+					}
+				} else {
+					try {
+						json.put("msg", "Visit ID data not found");
+						json.put("status", 0);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			
+		}
+		return json.toString();
+
+	}
+	
 }

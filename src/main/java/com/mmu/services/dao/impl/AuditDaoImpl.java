@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.postgresql.core.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.LinkedMultiValueMap;
@@ -2912,6 +2913,104 @@ public class AuditDaoImpl implements AuditDao {
 					}
 					return "statusUpdated";
 				}
+@Override			
+public List<Object[]> getIncidentReport(String fromDate, String toDate, int mmuId, int vendorId, String levelOfUser, int userId) {
+				Transaction transation=null;
+				Session session = getHibernateUtils.getHibernateUtlis().OpenSession();
+				transation=session.beginTransaction();
+				Date fd= new Date();
+				Date td= new Date();
+				try {
+					fd = HMSUtil.convertStringTypeDateToDateType(fromDate);
+					td = HMSUtil.convertStringTypeDateToDateType(toDate);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        String sql = 
+		                "SELECT city.city_name, mmu.mmu_name, CONCAT(" +
+		                "        CASE WHEN CEC.penalty_quantity > 0 AND CEC.available_quantity < CEC.assigned_quantity THEN " +
+		                "            CONCAT(MEQ.instrument_name, '- ', (CEC.assigned_quantity - CEC.available_quantity), ' quantity is not available. ') " +
+		                "        ELSE '' END, " +
+		                "        CASE WHEN CEC.penalty_quantity > 0 AND CEC.operational_quantity < CEC.available_quantity THEN " +
+		                "            CONCAT(MEQ.instrument_name, '- ', (CEC.available_quantity - CEC.operational_quantity), ' quantity is not Operational.') " +
+		                "        ELSE '' END) AS description, " +
+		                "    MP.penalty_description, CEC.incident_date, MP.penalty_amount, " +
+		                "    (SELECT MMU_NAME FROM MAS_MMU WHERE MMU_ID = :mmuId) AS hospital_name " +
+		                "FROM public.capture_equipment_checklist CEC " +
+		                "INNER JOIN mas_equipment_checklist MEQ ON MEQ.checklist_id = CEC.equipment_checklist_id " +
+		                "INNER JOIN mas_penalty MP ON MP.penalty_id = MEQ.penalty_id " +
+		                "INNER JOIN capture_equipment_checklist_details CED ON CEC.capture_equipment_checklist_detail_id = CED.capture_equipment_checklist_detail_id " +
+		                "INNER JOIN mas_mmu mmu ON CED.mmu_id = mmu.mmu_id " +
+		                "INNER JOIN mas_city city ON city.city_id = mmu.city_id " +
+		                "INNER JOIN mas_mmu_vendor mmv ON mmu.mmu_vendor_id = mmv.mmu_vendor_id " +
+		                "WHERE CED.inspection_date BETWEEN :fromDate AND :toDate " +
+		                "  AND UPPER(CEC.create_incident) = 'Y' " +
+		                "  AND (CED.MMU_ID = :mmuId OR :mmuId = 0) " +
+		                "  AND (CED.city_id = :cityId OR :cityId = 0) " +
+		                "  AND (mmu.mmu_vendor_id = :vendorId OR :vendorId = 0) " +
+		                "  AND MMU.MMU_ID IN (" +
+		                "      SELECT MMU.MMU_ID " +
+		                "      FROM MAS_MMU MMU, (" +
+		                "          SELECT to_number(foo, '99999999') IDS " +
+		                "          FROM regexp_split_to_table((" +
+		                "              SELECT CASE " +
+		                "                  WHEN 'M' = :levelOfUser THEN substring(M.MMU_ID, 1, length(M.MMU_ID) - 1) " +
+		                "                  WHEN 'C' = :levelOfUser THEN substring(M.CITY_ID, 1, length(M.CITY_ID) - 1) " +
+		                "                  WHEN 'D' = :levelOfUser THEN substring(M.DISTRICT_ID, 1, length(M.DISTRICT_ID) - 1) " +
+		                "                  ELSE '1' END " +
+		                "              FROM USERS M WHERE M.USER_ID = :userId), " +
+		                "          E',') AS foo) ALL_ID " +
+		                "      WHERE (" +
+		                "          (MMU.MMU_ID = ALL_ID.IDS AND 'M' = :levelOfUser) OR " +
+		                "          (MMU.CITY_ID = ALL_ID.IDS AND 'C' = :levelOfUser) OR " +
+		                "          (MMU.STATE_ID = ALL_ID.IDS AND 'S' = :levelOfUser) OR " +
+		                "          (MMU.DISTRICT_ID = ALL_ID.IDS AND 'D' = :levelOfUser))) " +
+		                "UNION ALL " +
+		                "SELECT city.city_name, mmu.mmu_name, CONCAT(MEQ.checklist_name, '- ', CEC.remarks) AS description, MP.penalty_description, " +
+		                "    CEC.incident_date, MP.penalty_amount, " +
+		                "    (SELECT MMU_NAME FROM MAS_MMU WHERE MMU_ID = :mmuId) AS hospital_name " +
+		                "FROM public.capture_inspection_checklist CEC " +
+		                "INNER JOIN mas_inspection_checklist MEQ ON MEQ.checklist_id = CEC.inspection_checklist_id " +
+		                "INNER JOIN mas_penalty MP ON MP.penalty_id = MEQ.penalty_id " +
+		                "INNER JOIN capture_inspection_details CED ON CEC.capture_inspection_detail_id = CED.capture_inspection_detail_id " +
+		                "INNER JOIN mas_mmu mmu ON CED.mmu_id = mmu.mmu_id " +
+		                "INNER JOIN mas_city city ON city.city_id = mmu.city_id " +
+		                "INNER JOIN mas_mmu_vendor mmv ON mmu.mmu_vendor_id = mmv.mmu_vendor_id " +
+		                "WHERE CED.inspection_date BETWEEN :fromDate AND :toDate " +
+		                "  AND UPPER(CEC.create_incident) = 'Y' " +
+		                "  AND (CED.MMU_ID = :mmuId OR :mmuId = 0) " +
+		                "  AND (CED.city_id = :cityId OR :cityId = 0) " +
+		                "  AND (mmu.mmu_vendor_id = :vendorId OR :vendorId = 0) " +
+		                "  AND MMU.MMU_ID IN (" +
+		                "      SELECT MMU.MMU_ID " +
+		                "      FROM MAS_MMU MMU, (" +
+		                "          SELECT to_number(foo, '99999999') IDS " +
+		                "          FROM regexp_split_to_table((" +
+		                "              SELECT CASE " +
+		                "                  WHEN 'M' = :levelOfUser THEN substring(M.MMU_ID, 1, length(M.MMU_ID) - 1) " +
+		                "                  WHEN 'C' = :levelOfUser THEN substring(M.CITY_ID, 1, length(M.CITY_ID) - 1) " +
+		                "                  WHEN 'D' = :levelOfUser THEN substring(M.DISTRICT_ID, 1, length(M.DISTRICT_ID) - 1) " +
+		                "                  ELSE '1' END " +
+		                "              FROM USERS M WHERE M.USER_ID = :userId), " +
+		                "          E',') AS foo) ALL_ID " +
+		                "      WHERE (" +
+		                "          (MMU.MMU_ID = ALL_ID.IDS AND 'M' = :levelOfUser) OR " +
+		                "          (MMU.CITY_ID = ALL_ID.IDS AND 'C' = :levelOfUser) OR " +
+		                "          (MMU.STATE_ID = ALL_ID.IDS AND 'S' = :levelOfUser) OR " +
+		                "          (MMU.DISTRICT_ID = ALL_ID.IDS AND 'D' = :levelOfUser)))";
+
+		        Query query = session.createSQLQuery(sql.toString());
+		        query.setParameter("fromDate", fd);
+		        query.setParameter("toDate", td);
+		        query.setParameter("mmuId", mmuId);
+		        query.setParameter("cityId", 0);
+		        query.setParameter("vendorId", vendorId);
+		        query.setParameter("levelOfUser", levelOfUser);
+		        query.setParameter("userId", userId);
+		        transation.commit();
+		        return query.list();
+		    }
 
 			
 				

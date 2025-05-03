@@ -107,4 +107,7 @@ public interface AuditService {
 
 	String deleteDocument(HashMap<String, Object> jsondata, HttpServletRequest request, HttpServletResponse response);
 
+	String getPenaltyRegister(HashMap<String, String> jsondata, HttpServletRequest request,
+			HttpServletResponse response);
+
 }
