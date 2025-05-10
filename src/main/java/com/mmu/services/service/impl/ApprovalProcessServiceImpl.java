@@ -157,6 +157,42 @@ public class ApprovalProcessServiceImpl implements ApprovalProcessService {
         return json.toString();
     }
 
+	@Override
+	public String saveOrUpdateOpdOfflineData(HashMap<String, Object> jsondata, HttpServletRequest request,
+			HttpServletResponse response) {
+		Long anmApmId = null;
+		JSONObject json = new JSONObject();
+
+		try {
+			if (!jsondata.isEmpty()) {
+				
+				
+							anmApmId = approvalProcessDao.saveOrUpdateOpdOfflineData(jsondata);
+							
+							if (anmApmId != null && anmApmId!=0) {
+								json.put("msg", "Fund Details Saved successfully ");
+								json.put("status", "1");
+								json.put("anmApmId", anmApmId);
+						} else if (anmApmId != null) {
+							json.put("msg", " you are not authorized for this activity ");
+							json.put("status", "0");
+						} else {
+							json.put("msg", anmApmId);
+							json.put("status", "0");
+						}
+
+			} else {
+				json.put("status", "0");
+				json.put("msg", "json not contain any object");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return json.toString();
+		
+	}
+
 	/*
 	 * @Override public Map<String, Object> getApprovalFormatData(HashMap<String,
 	 * Object> payload, HttpServletRequest request, HttpServletResponse response) {

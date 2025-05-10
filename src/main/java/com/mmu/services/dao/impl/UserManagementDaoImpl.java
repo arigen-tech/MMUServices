@@ -35,6 +35,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mmu.services.dao.RoleTemplateDao;
 import com.mmu.services.dao.UserManagementDao;
+import com.mmu.services.dto.UserDTO;
 import com.mmu.services.hibernateutils.GetHibernateUtils;
 import com.mmu.services.service.UserManagementService;
 import com.mmu.services.utils.HMSUtil;
@@ -2998,6 +2999,46 @@ public class UserManagementDaoImpl implements UserManagementDao {
 			}
 			return searchList;
 		}
+
+	@Override
+	public List<Users> getUsersList(HashMap<String, String> jsondata) {
+		Session session = getHibernateUtils.getHibernateUtlis().OpenSession();
+		Criteria cr = session.createCriteria(Users.class,"users");
+		 // Add condition for mmuId if present in jsondata
+	    if (jsondata.containsKey("mmuId") && jsondata.get("mmuId") != null && !jsondata.get("mmuId").isEmpty()) {
+	        String mmuId = jsondata.get("mmuId");
+	        mmuId=mmuId+",";
+	        cr.add(Restrictions.eq("mmuId", mmuId));
+	    }
+		if(jsondata.containsKey("userName")&& jsondata.get("userName")!="") {
+			String userName=jsondata.get("userName");
+			cr.add(Restrictions.ilike("userName", "%"+userName+"%"));	
+		}
+		
+		cr=cr.createAlias("users.masUserType", "us");
+		cr=cr.createAlias("users.employeeId", "emp");
+		cr=cr.createAlias("emp.masAdministrativeSex", "masAdministrativeSex");
+		ProjectionList projectionList = Projections.projectionList();
+		projectionList.add(Projections.property("users.userId").as("userId"));
+		projectionList.add(Projections.property("users.userName").as("userName"));
+		projectionList.add(Projections.property("users.mmuId").as("mmuId"));
+		projectionList.add(Projections.property("users.mobileNo").as("mobileNo"));
+		projectionList.add(Projections.property("us.userTypeId").as("userTypeId"));
+		projectionList.add(Projections.property("us.userTypeName").as("userTypeName"));
+		// Add a check to ensure employee_id is not null
+	    projectionList.add(Projections.property("masAdministrativeSex.administrativeSexName").as("administrativeSexName"));
+	    cr.add(Restrictions.isNotNull("users.employeeId"));
+		cr.setProjection(projectionList);
+		if(jsondata.containsKey("userName")&& jsondata.get("userName")!="") {
+			cr.setFirstResult(0);
+			cr.setMaxResults(30);
+		}
+		List<Users> list = cr.setResultTransformer(new AliasToBeanResultTransformer(UserDTO.class)).list();
+		/* @SuppressWarnings("unchecked")
+		  List<Users> list = cr.list();*/
+		getHibernateUtils.getHibernateUtlis().CloseConnection();
+		return list;
+	}
 	 
 	
 }

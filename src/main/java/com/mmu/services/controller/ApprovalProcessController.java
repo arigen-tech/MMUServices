@@ -58,5 +58,11 @@ public class ApprovalProcessController {
 	        return approvalProcessService.getAnmOpdOfflineData(new JSONObject(payload));
 	    }
 	    
+	   @RequestMapping(value="/saveOrUpdateAttendanceOfflineData", method = RequestMethod.POST,produces="application/json",consumes="application/json")
+		public String saveOrUpdateAttendanceOfflineData(@RequestBody HashMap<String, Object> jsondata, HttpServletRequest request,
+				HttpServletResponse response)
+		{
+			return approvalProcessService.saveOrUpdateOpdOfflineData(jsondata, request, response);
+		}
 	
 }

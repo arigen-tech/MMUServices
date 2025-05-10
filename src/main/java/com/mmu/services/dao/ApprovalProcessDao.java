@@ -17,6 +17,8 @@ public interface ApprovalProcessDao {
 
 	Map<String, List<AnmApmApproval>> getAnmOpdOfflineData(JSONObject jsondata);
 
+	Long saveOrUpdateOpdOfflineData(HashMap<String, Object> jsondata);
+
 	/* Map<String, Object> getIndentList(HashMap<String, Object> payload); */
 
 }

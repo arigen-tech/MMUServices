@@ -17,6 +17,9 @@ public interface ApprovalProcessService {
 
 	String getAnmOpdOfflineData(JSONObject jsonObject);
 
+	String saveOrUpdateOpdOfflineData(HashMap<String, Object> jsondata, HttpServletRequest request,
+			HttpServletResponse response);
+
 	/*
 	 * Map<String, Object> getApprovalFormatData(HashMap<String, Object> payload,
 	 * HttpServletRequest request, HttpServletResponse response);

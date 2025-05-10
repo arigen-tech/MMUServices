@@ -80,5 +80,6 @@ public interface UserManagementService {
 	Map<String, Object> getVendorList(Map<String, Object> requestData);
 	 
 	String getAuthenticateUser(JSONObject jsondata);
+	String getUsersList(HashMap<String, String> jsondata, HttpServletRequest request);
 		
 }

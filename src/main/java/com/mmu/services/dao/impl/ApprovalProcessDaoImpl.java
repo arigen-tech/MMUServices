@@ -2,12 +2,16 @@ package com.mmu.services.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +33,10 @@ import com.mmu.services.dao.ApprovalProcessDao;
 import com.mmu.services.dao.MedicalExamDAO;
 import com.mmu.services.dao.SystemAdminDao;
 import com.mmu.services.entity.AnmApmApproval;
+import com.mmu.services.entity.Attendance;
+import com.mmu.services.entity.AuditAttendanceData;
 import com.mmu.services.entity.FundAllocationHd;
+import com.mmu.services.entity.MasMMU;
 import com.mmu.services.entity.MasMedicalExamReport;
 import com.mmu.services.entity.StoreInternalIndentM;
 import com.mmu.services.entity.Users;
@@ -221,6 +228,60 @@ public class ApprovalProcessDaoImpl implements ApprovalProcessDao {
         }
         return map;
     }
+
+
+
+	@Override
+	public Long saveOrUpdateOpdOfflineData(HashMap<String, Object> jsondata) {
+		 Session session = getHibernateUtils.getHibernateUtlis().OpenSession();
+		 Transaction t = session.beginTransaction();
+		 Long attendanceId = null;
+		 Date date = new Date();
+	     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+	     String str = formatter.format(date);
+	     Date today=HMSUtil.convertStringTypeDateToDateType(str);
+		 try {
+				 AuditAttendanceData auditAttendanceData=new AuditAttendanceData();
+				 auditAttendanceData.setStatus(jsondata.get("actionId").toString());
+				 auditAttendanceData.setRemarks(jsondata.get("remarks").toString());
+				 Long mmuIdValue = Long.parseLong(jsondata.get("mmuId").toString());
+				 MasMMU masMMU = (MasMMU) session.get(MasMMU.class, mmuIdValue);
+				 auditAttendanceData.setMmuId(masMMU);
+				 Long employeeIdValue = Long.parseLong(jsondata.get("employeeId").toString());
+				 Users empId = (Users) session.get(Users.class, employeeIdValue);
+				 auditAttendanceData.setUserId(empId);
+				 Long userIdValue = Long.parseLong(jsondata.get("userId").toString());
+				 Users usersId = (Users) session.get(Users.class, userIdValue);
+				 auditAttendanceData.setLastChangeBy(usersId);
+				 auditAttendanceData.setLastChgDate(today);
+				 Date dateOfEntry=HMSUtil.convertStringTypeDateToDateType(jsondata.get("dateOfEntry").toString());
+				 // Define a custom formatter for dd/MM/yyyy
+			        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+			        // Parse the date
+			        LocalDate date1 = LocalDate.parse(jsondata.get("dateOfEntry").toString(), formatter1);
+
+			        // Extract month and year
+			        int month = date1.getMonthValue();
+			        int year = date1.getYear();
+			       auditAttendanceData.setAttendanceMonth(month);
+			       auditAttendanceData.setAttendanceYear(year);
+				 auditAttendanceData.setAttendanceDate(dateOfEntry);
+				 attendanceId =Long.parseLong(session.save(auditAttendanceData).toString());
+	   		     t.commit();	
+
+			
+		 }catch (Exception e) {
+			e.printStackTrace();
+			t.rollback();
+			System.out.println("Exception Message Print ::" + e.toString());
+			return 0L;
+			
+		 }finally {
+				getHibernateUtils.getHibernateUtlis().CloseConnection();
+			}
+		 return attendanceId;
+	}
 	
 	
 	/*

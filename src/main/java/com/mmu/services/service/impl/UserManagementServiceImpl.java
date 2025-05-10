@@ -2855,5 +2855,41 @@ public class UserManagementServiceImpl implements UserManagementService {
 		return json.toString();
 	}
 
+	@Override
+	public String getUsersList(HashMap<String, String> jsondata, HttpServletRequest request) {
+		JSONObject json = new JSONObject();
+        try
+        {
+		if (jsondata.get("userName") == null || jsondata.get("userName").toString().trim().equals(""))
+		{
+			return "{\"status\":\"0\",\"msg\":\"json is not contain userName as a  key or value or it is null\"}";
+		} 
+		else
+		{
+				
+				List<Users> mst_users = userManagementDao.getUsersList(jsondata);
+			    if (mst_users.size() == 0)
+			    {
+			    	 return "{\"status\":\"0\",\"msg\":\"Data not found\"}";
+			    } 
+			    else 
+			    {
+			    
+			    	json.put("usersList", mst_users);
+			    	json.put("msg", "mst_users List  get  sucessfull... ");
+			    	json.put("status", "1");
+
+			   }
+
+		
+
+		return json.toString();
+	}
+        }finally
+        {
+        	System.out.println("Hi");
+        }
+	}
+
 	
 }

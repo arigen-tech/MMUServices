@@ -444,4 +444,10 @@ public class UserManagementController {
 	public String getAuthenticateUser(@RequestBody Map<String, Object> jsonData) {
 		return userManagementService.getAuthenticateUser(new JSONObject(jsonData));
 	}
+	
+	///Auto complete features /////////////////
+	@RequestMapping(value = "/getUsersList", method = RequestMethod.POST)
+	public String getUsersList(@RequestBody HashMap<String, String> jsondata, HttpServletRequest request) {
+		return userManagementService.getUsersList(jsondata, request);
+	}
 }

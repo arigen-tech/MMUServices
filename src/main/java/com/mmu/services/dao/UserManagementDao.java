@@ -123,5 +123,6 @@ public interface UserManagementDao {
 	Long getAllMAsApplicationMax();
 	String getPatientValid(JSONObject jsondata);
 	List getApprovingDetais(Long userTypeId);
+	List<Users> getUsersList(HashMap<String, String> jsondata);
 	 
 }
