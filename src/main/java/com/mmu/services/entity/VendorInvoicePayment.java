@@ -145,5 +145,29 @@ public class VendorInvoicePayment implements Serializable {
 		this.phase = phase;
 	}
  	
+	@Column(name="clear_amount")
+    private Long clearAmount;
+	
+	@Column(name="advanced_payment")
+    private Long advancedPayment;
+	
+
+	public Long getClearAmount() {
+		return clearAmount;
+	}
+
+	public void setClearAmount(Long clearAmount) {
+		this.clearAmount = clearAmount;
+	}
+
+	public Long getAdvancedPayment() {
+		return advancedPayment;
+	}
+
+	public void setAdvancedPayment(Long advancedPayment) {
+		this.advancedPayment = advancedPayment;
+	}
+	
+	
 
 }

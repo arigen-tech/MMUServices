@@ -1533,11 +1533,13 @@ public class AuditDaoImpl implements AuditDao {
 				 vip.setPaymentDate(dateOfPayment);
 		         vip.setInvoiceAmount(Long.parseLong(jsondata.get("invoiceAmount").toString()));
 		         vip.setPenaltyAmount(Long.parseLong(jsondata.get("penaltyAmount").toString()));
-		         vip.setAmountPaid(Long.parseLong(jsondata.get("finalAmount").toString()));
+		         vip.setClearAmount(Long.parseLong(jsondata.get("finalAmount").toString()));
 		         vip.setTdsDeduction(Long.parseLong(jsondata.get("tdsDeduction").toString()));
 		         vip.setModeOfPayment(jsondata.get("modeOfPayment").toString());
 		         vip.setTransactionNumber(jsondata.get("transNo").toString());
 		         vip.setPhase(jsondata.get("phase").toString());
+		         vip.setAdvancedPayment(Long.parseLong(jsondata.get("advancedAmount").toString()));
+		         vip.setAmountPaid(Long.parseLong(jsondata.get("calculateUtilzedAmount").toString()));
 		         session.save(vip);
 	          }
 		
@@ -1545,9 +1547,11 @@ public class AuditDaoImpl implements AuditDao {
 			
 				String penaltyAmount=jsondata.get("penaltyAmount").toString();
 				String finalAmount=jsondata.get("finalAmount").toString();
+				String calculateUtilzedAmount=jsondata.get("calculateUtilzedAmount").toString();
+				String advancedPayment=jsondata.get("advancedAmount").toString();
 				String lastApprovalMsg=jsondata.get("lastApprovalMsg").toString();
 				String phase=jsondata.get("phase").toString();
-				String qryStringHd  ="update CaptureVendorBillDetail u set u.lastApprovalStatus='"+lastApprovalMsg+"',u.penaltyAmount='"+penaltyAmount+"',u.finalAmount='"+finalAmount+"',u.status='C',u.paymentStatus='C',u.phase='"+phase+"'  where u.captureVendorBillDetailId='"+captureVendorBillDetailId+"' " ;
+				String qryStringHd  ="update CaptureVendorBillDetail u set u.lastApprovalStatus='"+lastApprovalMsg+"',u.penaltyAmount='"+penaltyAmount+"',u.clearAmount='"+finalAmount+"',u.finalAmount='"+calculateUtilzedAmount+"',u.advancedPayment='"+advancedPayment+"',u.status='C',u.paymentStatus='C',u.phase='"+phase+"'  where u.captureVendorBillDetailId='"+captureVendorBillDetailId+"' " ;
 				Query queryHd = session.createQuery(qryStringHd);
 		        int countHd = queryHd.executeUpdate();
 				System.out.println(countHd + "Records CaptureVendorBillDetail Updated.");

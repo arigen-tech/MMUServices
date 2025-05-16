@@ -2335,7 +2335,7 @@ public class AuditServiceImpl implements AuditService {
 			if(jsondata.containsKey("tdsDeduction"))
 				{
 					
-					Long finalAmount=(long)Double.parseDouble(jsondata.get("finalAmount").toString());
+					Long finalAmount=(long)Double.parseDouble(jsondata.get("calculateUtilzedAmount").toString());
 				    getFundDetails(finalAmount,Long.parseLong(jsondata.get("districtId").toString()),Long.parseLong(jsondata.get("cityId").toString()),jsondata.get("phase").toString());
 				    //this code covered payment recepit document upload and remarks in supprting docs table
 				    VendorInvoicSupportingDocs vendorInvoicSupportingDocs = new VendorInvoicSupportingDocs();
@@ -2408,13 +2408,14 @@ public class AuditServiceImpl implements AuditService {
                              }
 
                             mapObj.put("vendorInvoicePaymentId", e.getVendorInvoicePaymentId());
-                            mapObj.put("amountPaid", e.getAmountPaid());
+                            mapObj.put("amountPaid", e.getClearAmount());
                             mapObj.put("invoiceAmount", e.getInvoiceAmount());
                             mapObj.put("modeOfPayment", e.getModeOfPayment());
                             mapObj.put("penaltyAmount", e.getPenaltyAmount());
                             mapObj.put("tdsDeduction", e.getTdsDeduction());
                             mapObj.put("transactionNumber", e.getTransactionNumber());
                             mapObj.put("paymentDate", paymentDate);
+                            mapObj.put("advancedPayment", e.getAdvancedPayment());
                                                      
                             list.add(mapObj);
                         }
