@@ -20,6 +20,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -13325,7 +13326,7 @@ return result;
 							
 						}
 				 }
-				
+							
 				 criteria.addOrder(Order.asc("districtName"));
 				 totalMatches = criteria.list();				 
 				 criteria.setFirstResult((pageSize) * (pageNo - 1));
@@ -13335,6 +13336,13 @@ return result;
 		 if(jsondata.get("PN").toString().equals("0")) {
 			 criteria.addOrder(Order.asc("districtName"));
 			 criteria.add(Restrictions.eq("status", "y").ignoreCase());
+			 if (jsondata.has("vendorId"))
+			 {
+				Long vendorId=Long.parseLong(jsondata.getString("vendorId").toString()); 
+				Criterion vendorIdEq = Restrictions.eq("vendorId", vendorId);
+			    Criterion vendorIdNull = Restrictions.isNull("vendorId");
+			    criteria.add(Restrictions.or(vendorIdEq, vendorIdNull));
+			 }	
 			 totalMatches = criteria.list();				 
 			 districtList = criteria.list();
 		 }
@@ -13844,6 +13852,10 @@ return result;
 					masDistrictObj.setPopulation(masDistrict.getPopulation());
 					masDistrictObj.setOrderNo(masDistrict.getOrderNo());
 					masDistrictObj.setUpss(masDistrict.getUpss());
+					if(masDistrict.getVendorId()!=null)
+					{
+					  masDistrictObj.setVendorId(masDistrict.getVendorId());
+					}
 					if(masDistrict.getStartDate()!=null)
 					{	
 				    //Date startDate=HMSUtil.dateFormatteryyyymmdd(masDistrict.getStartDate().toString());

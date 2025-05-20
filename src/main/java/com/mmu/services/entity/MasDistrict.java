@@ -201,6 +201,20 @@ public class MasDistrict implements Serializable {
 		this.startDate = startDate;
 	}
 	
+	@Column(name = "vendor_id ")
+	private Long vendorId ;
+
+
+	public Long getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(Long vendorId) {
+		this.vendorId = vendorId;
+	}
+	
+	
+	
 	
 	
 	

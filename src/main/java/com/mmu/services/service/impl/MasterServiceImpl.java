@@ -12646,6 +12646,11 @@ public class MasterServiceImpl implements MasterService {
 								}
 								mapObj.put("stateId", dt.getMasState().getStateId());
 								mapObj.put("population", dt.getPopulation() !=null ?  dt.getPopulation() :" ");
+								if(dt.getVendorId() !=null) {
+								mapObj.put("vendorId", dt.getVendorId());
+								}else {
+									mapObj.put("vendorId", "");
+								}
 								mapObj.put("status", dt.getStatus());
 								mapObj.put("upss", dt.getUpss());
 								if(dt.getLongitude()!=null)
@@ -13067,6 +13072,10 @@ public class MasterServiceImpl implements MasterService {
 			{
 				masMasDistrict.setPopulation(Long.parseLong(jsondata.get("population").toString()));	
 			}
+			if(jsondata.get("vendorId").toString() !=null && !jsondata.get("vendorId").toString().isEmpty())
+			{
+				masMasDistrict.setVendorId(Long.parseLong(jsondata.get("vendorId").toString()));	
+			}
 			MasState masState=new MasState();
 			masState.setStateId(Long.parseLong(jsondata.get("stateId").toString()));
 			masMasDistrict.setMasState(masState);
@@ -13153,6 +13162,10 @@ public class MasterServiceImpl implements MasterService {
 					if(jsonObject.getString("population").toString() !=null && !jsonObject.getString("population").toString().isEmpty())
 					{
 						masDistrict.setPopulation(Long.parseLong(jsonObject.getString("population").toString()));
+					}
+					if(jsonObject.getString("vendorId").toString() !=null && !jsonObject.getString("vendorId").toString().isEmpty())
+					{
+						masDistrict.setVendorId(Long.parseLong(jsonObject.getString("vendorId").toString()));	
 					}
 					masDistrict.setStartDate(HMSUtil.convertStringDateToUtilDateForDatabase(jsonObject.get("startDate").toString()));
 					MasState masState=new MasState();
